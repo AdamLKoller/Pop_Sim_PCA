@@ -13121,3 +13121,11 @@ venv/Scripts/python.exe
 venv/Scripts/pythonw.exe
 venv/Scripts/ttx.exe
 venv/share/man/man1/ttx.1
+test.py
+50-1000-100-3/00.jpg
+50-1000-100-3/25.jpg
+50-1000-100-3/50.jpg
+500-1000-100-3/00.jpg
+500-1000-100-3/250.jpg
+500-1000-100-3/500.jpg
+__pycache__/sim.cpython-311.pyc

@@ -1,19 +1,14 @@
 '''A script to simulate population divergence, visualized through PCA on SNPs'''
 
-# TODO: Add labels with coloring
-
 import random
+import warnings
+import os
 import numpy as np
 from sklearn import decomposition
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from matplotlib.animation import PillowWriter
-import cv2
-import os
 
-
-import warnings
 warnings.filterwarnings("ignore")
 
 def generate_population(num_individuals: int = 1000, num_snps: int = 100):
@@ -72,18 +67,27 @@ def sim_breeding(population_matrix: np.array):
 def sim_main(generations: int = 100, num_individuals: int = 100, num_snps: int = 100, k:int = 2, stages: list = None):
     '''The main show!'''
     print(f'Simulating {generations} generations with {k} populations each with {num_individuals} individuals with {num_snps} snps')
-    if stages == None:
+    if stages is None:
         stages = [generations//2, generations]
 
-    directory_path = f'./{generations}-{num_individuals}-{num_snps}-{k}'
-    index = 0
-    while True:
+    # Creating directory path
+    try:
+        directory_path = f'./{generations}-{num_individuals}-{num_snps}-{k}'
+        os.makedirs(directory_path)
+    except FileExistsError:
         try:
+            directory_path = f'./{generations}-{num_individuals}-{num_snps}-{k} (1)'
             os.makedirs(directory_path)
-            break
-        except:
-            index += 1
-            directory_path = f'{directory_path[:-4]} ({index})'
+        except FileExistsError:
+            index = 2
+            while True:
+                try:
+                    os.makedirs(directory_path)
+                except FileExistsError:
+                    directory_path = f'{directory_path[:-4]} ({index})'
+                    index += 1
+                else:
+                    break
 
     gen0 = generate_population(num_individuals * k, num_snps)
     population_matrices_lst = split_population(gen0, k)
@@ -93,32 +97,6 @@ def sim_main(generations: int = 100, num_individuals: int = 100, num_snps: int =
         population_matrices_lst = [sim_breeding(x) for x in population_matrices_lst]
         if generation_count in stages:
             generate_pca(population_matrices_lst, generation_count, directory_path)
-    
-    return directory_path
+        print(f'Generation {generation_count} of {generations} complete.')
 
-def build_movie(image_folder, video_name, fps ):
-    '''Builds a movie of the populations across generations'''
-    img_array = []
-    
-    for filename in os.listdir(image_folder):
-        
-        filename = f'{image_folder}/{filename}'
-        print(filename)
-        img = cv2.imread(filename)
-        height, width, layers = img.shape
-        size = (width,height)
-        img_array.append(img)
-
-    out = cv2.VideoWriter(video_name,cv2.VideoWriter_fourcc(*'DIVX'), fps, size)
-    
-    
-
-    for img in img_array:
-        out.write(img)
-    
-   
-    out.release()
- 
-
-
-build_movie(sim_main(generations=25,num_individuals=100,num_snps=100, k=3, stages=range(1,26)), 'test.avi', 5  )
+    print(f'Simulation complete. Plots can be found within {directory_path}')
