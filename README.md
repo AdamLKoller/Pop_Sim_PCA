@@ -69,7 +69,9 @@ sim_main(
 
 Generation 0
 ![Generation 0](./100-100-100-2/00.jpg)
+<br>
 Generation 50
 ![Generation 50](./100-100-100-2/50.jpg)
+<br>
 Generation 100
 ![Generation 100](./100-100-100-2/100.jpg)
