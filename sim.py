@@ -36,8 +36,6 @@ def generate_pca(population_matrices_lst: list, generation_count: int, directory
     num_individuals = population_matrix.shape[0]
     pca = decomposition.PCA(n_components=2)
     pca.fit(population_matrix)
-    print(pca.explained_variance_ratio_)
-    print(pca.singular_values_)
     to_plot = pca.transform(population_matrix)
     to_plot = pd.DataFrame(to_plot, columns = ['PCA1','PCA2'])
 
